@@ -6,6 +6,7 @@ import {
   mantineHtmlProps,
   MantineProvider,
 } from "@mantine/core";
+import { PostHogProvider } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,9 @@ export default function RootLayout(props: RootLayoutProps) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <MantineProvider>{props.children}</MantineProvider>
+        <PostHogProvider>
+          <MantineProvider>{props.children}</MantineProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@mantine/core";
+import { usePostHog } from "posthog-js/react";
 import QRCode from "qrcode";
 
 import { QRValues } from "~/hooks/useQR";
@@ -10,6 +11,7 @@ interface DownloadButtonProps {
 }
 
 export default function DownloadButton(props: DownloadButtonProps) {
+  const posthog = usePostHog();
   const { data } = props;
 
   const generatorOpts = {
@@ -49,6 +51,11 @@ export default function DownloadButton(props: DownloadButtonProps) {
       link.click();
       document.body.removeChild(link);
     }
+
+    void posthog.capture("qr_code_download", {
+      format: data.format,
+      size: data.size,
+    });
   }
 
   return (
