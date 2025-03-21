@@ -11,6 +11,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
+import { useRef } from "react";
 
 import { useQR } from "~/hooks/useQR";
 
@@ -19,6 +20,19 @@ const PLACEHOLDER_URL =
 
 export default function QRGenerator() {
   const { values, handleChange, preview } = useQR();
+  const urlElementRef = useRef<HTMLInputElement>(null);
+
+  const onPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const clipboardData = e.clipboardData;
+    const pastedData = clipboardData.getData("text");
+
+    if (urlElementRef.current) {
+      urlElementRef.current.value = pastedData;
+    }
+
+    handleChange("url", pastedData);
+  };
 
   return (
     <Paper withBorder p="xl" radius="md" miw={400} maw={500}>
@@ -26,10 +40,12 @@ export default function QRGenerator() {
       <Text size="sm">Create simple QR codes...fast</Text>
 
       <TextInput
+        ref={urlElementRef}
         mt="md"
         label="URL or Text"
         defaultValue={"https://example.com"}
         onChange={(e) => handleChange("url", e.currentTarget.value)}
+        onPaste={onPaste}
       />
 
       <SimpleGrid
