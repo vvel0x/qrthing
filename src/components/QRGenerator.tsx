@@ -3,6 +3,7 @@
 import {
   ColorInput,
   Paper,
+  SegmentedControl,
   SimpleGrid,
   Slider,
   Stack,
@@ -14,9 +15,10 @@ import { useRef } from "react";
 
 import { useQR } from "~/hooks/useQR";
 import QRPreview from "./QRPreview";
+import DownloadButton from "./DownloadButton";
 
 export default function QRGenerator() {
-  const { values, handleChange, preview } = useQR();
+  const { values, handleChange } = useQR();
   const urlElementRef = useRef<HTMLInputElement>(null);
 
   const onPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -79,10 +81,28 @@ export default function QRGenerator() {
             defaultValue="#000000"
             onChange={(v) => handleChange("foregroundColor", v)}
           />
+
+          <div>
+            <Text size="sm" fw={500}>
+              Download Format
+            </Text>
+            <SegmentedControl
+              defaultValue="png"
+              data={[
+                { label: "PNG", value: "png" },
+                { label: "SVG", value: "svg" },
+              ]}
+              onChange={(value) =>
+                handleChange("format", value as "png" | "svg")
+              }
+            />
+          </div>
         </Stack>
 
         <QRPreview data={values} />
       </SimpleGrid>
+
+      <DownloadButton data={values} />
     </Paper>
   );
 }
