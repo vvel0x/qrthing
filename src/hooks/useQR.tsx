@@ -1,10 +1,8 @@
 "use client";
 
 import { useDebouncedState } from "@mantine/hooks";
-import { useEffect, useRef, useState } from "react";
-import QRCode from "qrcode";
 
-interface QRValues {
+export interface QRValues {
   url: string;
   size: number;
   backgroundColor: string;
@@ -22,8 +20,6 @@ const DEFAULT_VALUES: QRValues = {
 
 export function useQR() {
   const [values, setValues] = useDebouncedState<QRValues>(DEFAULT_VALUES, 200);
-  const [preview, setPreview] = useState<string | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   function handleChange<FieldName extends keyof QRValues>(
     fieldName: FieldName,
@@ -35,34 +31,8 @@ export function useQR() {
     }));
   }
 
-  useEffect(() => {
-    QRCode.toString(values.url, {
-      type: "svg",
-      margin: 1,
-      width: 100,
-      color: {
-        dark: values.foregroundColor,
-        light: values.backgroundColor,
-      },
-    })
-      .then((url) => {
-        setPreview(
-          `data:image/svg+xml;charset=utf-8,${encodeURIComponent(url)}`
-        );
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-
-    return () => {
-      setPreview(null);
-    };
-  }, [values]);
-
   return {
-    canvasRef,
     handleChange,
-    preview,
     values,
   };
 }
